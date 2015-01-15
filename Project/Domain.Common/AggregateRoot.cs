@@ -28,7 +28,7 @@ namespace Domain.Common
 
         public int Version { get; internal set; }
 
-        public IReadOnlyCollection<DomainEvent> GetUncommittedEvents()
+        public ICollection<DomainEvent> GetUncommittedEvents()
         {
             return uncommittedEvents.ToList().AsReadOnly();
         }

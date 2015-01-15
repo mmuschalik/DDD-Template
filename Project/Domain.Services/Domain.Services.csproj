@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6B587842-9E89-43F6-80DE-F2E5EBAFC5B3}</ProjectGuid>
+    <ProjectGuid>{A0263834-E810-4CC1-9EB2-B5110C3AD76B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Domain.Common</RootNamespace>
-    <AssemblyName>Domain.Common</AssemblyName>
+    <RootNamespace>Domain.Services</RootNamespace>
+    <AssemblyName>Domain.Services</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -35,21 +35,21 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AggregateRoot.cs" />
-    <Compile Include="AuthSession.cs" />
-    <Compile Include="DomainEvent.cs" />
-    <Compile Include="IAuthSession.cs" />
-    <Compile Include="IHandleCommand.cs" />
-    <Compile Include="IHandleDomainEvent.cs" />
-    <Compile Include="IMessage.cs" />
-    <Compile Include="Infrastructure\IBus.cs" />
-    <Compile Include="ICommand.cs" />
-    <Compile Include="Infrastructure\IEventStore.cs" />
-    <Compile Include="Infrastructure\IKeyValueStore.cs" />
-    <Compile Include="Infrastructure\ILogger.cs" />
-    <Compile Include="Infrastructure\IRepository.cs" />
-    <Compile Include="Infrastructure\IUnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Domain.Common\Domain.Common.csproj">
+      <Project>{6b587842-9e89-43f6-80de-f2e5ebafc5b3}</Project>
+      <Name>Domain.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Domain.QueryModel\Domain.QueryModel.csproj">
+      <Project>{cdcc4c11-7288-4cd5-88f5-f262216f30b4}</Project>
+      <Name>Domain.QueryModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Domain\Domain.csproj">
+      <Project>{172424e0-b862-4de2-8ca0-3d1ed8caf42b}</Project>
+      <Name>Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
