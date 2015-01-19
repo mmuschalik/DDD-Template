@@ -10,7 +10,7 @@ namespace Domain.Common.Infrastructure
     {
         void Subscribe<T>(Action<T> action) where T : IMessage;
 
-        void Send<T>(T command) where T : ICommand;
+        void Send<T>(T command) where T : Command;
 
         void Publish<T>(T message) where T : DomainEvent;
     }

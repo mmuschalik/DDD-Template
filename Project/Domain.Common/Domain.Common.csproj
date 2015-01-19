@@ -43,7 +43,7 @@
     <Compile Include="IHandleDomainEvent.cs" />
     <Compile Include="IMessage.cs" />
     <Compile Include="Infrastructure\IBus.cs" />
-    <Compile Include="ICommand.cs" />
+    <Compile Include="Command.cs" />
     <Compile Include="Infrastructure\IEventStore.cs" />
     <Compile Include="Infrastructure\IKeyValueStore.cs" />
     <Compile Include="Infrastructure\ILogger.cs" />

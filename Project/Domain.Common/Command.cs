@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace Domain.Common
 {
     /// <summary>
-    /// Command interface to be triggered from the UI
+    /// Command to be triggered from the UI
     /// </summary>
-    public interface ICommand
+    public abstract class Command : IMessage
     {
 
     }

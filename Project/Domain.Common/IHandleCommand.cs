@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Domain.Common
 {
     // Basic interface for any classes that handle commands
-    public interface IHandleCommand<T> where T : ICommand
+    public interface IHandleCommand<T> where T : Command
     {
         void Handle(T command);
     }
