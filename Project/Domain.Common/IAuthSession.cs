@@ -12,7 +12,6 @@ namespace Domain.Common
         string DisplayName { get; }
         object UserId { get; }
 
-        bool IsAuthenticated { get; }
         bool HasRole(string role);
         bool HasPermission(string permission);
 

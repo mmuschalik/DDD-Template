@@ -13,7 +13,6 @@ namespace Domain.Common
         private HashSet<string> _roles;
 
         public string DisplayName { get; private set; }
-        public bool IsAuthenticated { get; private set; }
         public object SessionId { get; private set; }
         public object UserId { get; private set; }
 

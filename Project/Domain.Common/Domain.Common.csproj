@@ -37,11 +37,13 @@
   <ItemGroup>
     <Compile Include="AggregateRoot.cs" />
     <Compile Include="AuthSession.cs" />
+    <Compile Include="Credentials.cs" />
     <Compile Include="DomainEvent.cs" />
     <Compile Include="IAuthSession.cs" />
     <Compile Include="IHandleCommand.cs" />
     <Compile Include="IHandleDomainEvent.cs" />
     <Compile Include="IMessage.cs" />
+    <Compile Include="Infrastructure\IAuthProvider.cs" />
     <Compile Include="Infrastructure\IBus.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Infrastructure\IEventStore.cs" />
