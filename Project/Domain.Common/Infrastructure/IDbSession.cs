@@ -8,9 +8,9 @@ namespace Domain.Common.Infrastructure
 {
     public interface IDbSession : IDisposable
     {
-        void Add<T>(T item);
-        void Remove<T>(T item);
-        IQueryable<T> Query<T>();
+        void Add<T>(T item) where T : class;
+        void Remove<T>(T item) where T : class;
+        IQueryable<T> Query<T>() where T : class;
         void Commit();
     }
 
