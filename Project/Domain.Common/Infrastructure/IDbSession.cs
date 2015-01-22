@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace Domain.Common.Infrastructure
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IDbSession : IDisposable
     {
+        void Add<T>(T item);
+        void Remove<T>(T item);
+        IQueryable<T> Query<T>();
         void Commit();
     }
+
 }

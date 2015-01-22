@@ -46,11 +46,11 @@
     <Compile Include="Infrastructure\IAuthProvider.cs" />
     <Compile Include="Infrastructure\IBus.cs" />
     <Compile Include="Command.cs" />
+    <Compile Include="Infrastructure\IDbSession.cs" />
     <Compile Include="Infrastructure\IEventStore.cs" />
     <Compile Include="Infrastructure\IKeyValueStore.cs" />
     <Compile Include="Infrastructure\ILogger.cs" />
     <Compile Include="Infrastructure\IRepository.cs" />
-    <Compile Include="Infrastructure\IUnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
