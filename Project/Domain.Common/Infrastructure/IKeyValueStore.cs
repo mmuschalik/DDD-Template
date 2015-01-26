@@ -10,6 +10,8 @@ namespace Domain.Common.Infrastructure
     {
         T Get<T>(string key);
 
+        bool ContainsKey(string key);
+
         void Set(string key, object value);
     }
 }
