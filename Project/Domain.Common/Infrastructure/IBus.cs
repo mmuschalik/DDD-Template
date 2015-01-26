@@ -12,6 +12,6 @@ namespace Domain.Common.Infrastructure
 
         void Send<T>(T command) where T : Command;
 
-        void Publish<T>(T message) where T : DomainEvent;
+        void Publish<T>(T @event) where T : DomainEvent;
     }
 }

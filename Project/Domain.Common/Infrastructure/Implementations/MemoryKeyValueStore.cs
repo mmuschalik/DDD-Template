@@ -6,14 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain.Common.Infrastructure
 {
-    public class MemoryHeapKeyValueStore : IKeyValueStore
+    public class MemoryKeyValueStore : IKeyValueStore
     {
-        private Dictionary<string, object> _dictionary;
-
-        public MemoryHeapKeyValueStore()
-        {
-            _dictionary = new Dictionary<string, object>();
-        }
+        private readonly Dictionary<string, object> _dictionary = new Dictionary<string, object>();
 
         public bool ContainsKey(string key)
         {

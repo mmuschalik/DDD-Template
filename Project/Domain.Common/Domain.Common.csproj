@@ -40,10 +40,14 @@
     <Compile Include="AuthToken.cs" />
     <Compile Include="Credentials.cs" />
     <Compile Include="DomainEvent.cs" />
+    <Compile Include="Ensure.cs" />
     <Compile Include="IAuthSession.cs" />
     <Compile Include="IHandleCommand.cs" />
     <Compile Include="IHandleDomainEvent.cs" />
     <Compile Include="IMessage.cs" />
+    <Compile Include="Infrastructure\Implementations\ActionDictionaryBus.cs" />
+    <Compile Include="Infrastructure\Implementations\ConsoleLogger.cs" />
+    <Compile Include="Infrastructure\Implementations\DelegateAdjuster.cs" />
     <Compile Include="Infrastructure\IAuthProvider.cs" />
     <Compile Include="Infrastructure\IBus.cs" />
     <Compile Include="Command.cs" />
@@ -52,7 +56,8 @@
     <Compile Include="Infrastructure\IKeyValueStore.cs" />
     <Compile Include="Infrastructure\ILogger.cs" />
     <Compile Include="Infrastructure\IRepository.cs" />
-    <Compile Include="Infrastructure\MemoryHeapKeyValueStore.cs" />
+    <Compile Include="Infrastructure\Implementations\MemoryKeyValueStore.cs" />
+    <Compile Include="Infrastructure\Implementations\MemoryRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
