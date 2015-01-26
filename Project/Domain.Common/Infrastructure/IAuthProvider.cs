@@ -10,6 +10,8 @@ namespace Domain.Common.Infrastructure
     {
         IAuthSession Authenticate(Credentials credentials);
 
+        IAuthSession Authenticate(AuthToken token);
+
         bool Logout(IAuthSession session);
     }
 }

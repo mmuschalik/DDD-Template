@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="AggregateRoot.cs" />
     <Compile Include="AuthSession.cs" />
+    <Compile Include="AuthToken.cs" />
     <Compile Include="Credentials.cs" />
     <Compile Include="DomainEvent.cs" />
     <Compile Include="IAuthSession.cs" />

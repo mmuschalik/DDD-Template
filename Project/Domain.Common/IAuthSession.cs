@@ -8,9 +8,9 @@ namespace Domain.Common
 {
     public interface IAuthSession
     {
-        object SessionId { get; }
+        AuthToken AuthenticatedToken { get; }
         string DisplayName { get; }
-        object UserId { get; }
+        string UserId { get; }
 
         bool HasRole(string role);
         bool HasPermission(string permission);

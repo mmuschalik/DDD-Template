@@ -13,8 +13,8 @@ namespace Domain.Common
         private HashSet<string> _roles;
 
         public string DisplayName { get; private set; }
-        public object SessionId { get; private set; }
-        public object UserId { get; private set; }
+        public AuthToken AuthenticatedToken { get; private set; }
+        public string UserId { get; private set; }
 
         public object this[string key]
         {
@@ -28,7 +28,7 @@ namespace Domain.Common
             }
         }
 
-        public AuthSession(object sessionId, string displayName, object UserId, IEnumerable<string> permissions, IEnumerable<string> roles)
+        public AuthSession(AuthToken sessionId, string displayName, string UserId, IEnumerable<string> permissions, IEnumerable<string> roles)
         {
             _properties = new Dictionary<string, object>();
             _permissions = new HashSet<string>();
