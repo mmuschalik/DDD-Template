@@ -1,5 +1,5 @@
 ﻿using Domain.Common.Infrastructure;
-using log4net;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,22 +10,22 @@ namespace Project.Infrastructure
 {
     public class Logger : ILogger
     {
-        private static readonly ILog logger =
-          LogManager.GetLogger(typeof(Logger));
+        private static readonly NLog.Logger logger =
+          LogManager.GetCurrentClassLogger();
 
         public void Debug(string message, params object[] format)
         {
-            logger.DebugFormat(message, format);
+            logger.Debug(message, format);
         }
 
         public void Error(string message, params object[] format)
         {
-            logger.ErrorFormat(message, format);
+            logger.Error(message, format);
         }
 
         public void Info(string message, params object[] format)
         {
-            logger.InfoFormat(message, format);
+            logger.Info(message, format);
         }
     }
 }
