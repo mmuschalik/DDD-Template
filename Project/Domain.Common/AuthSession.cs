@@ -40,7 +40,7 @@ namespace Domain.Common
             foreach (var r in roles)
                 _roles.Add(r);
         }
-        
+
         public bool HasPermission(string permission)
         {
             return _permissions.Contains(permission);
@@ -50,17 +50,17 @@ namespace Domain.Common
         {
             return _roles.Contains(role);
         }
-        
-        public void EnsureHasPermission(string permission) // add to iterface
+
+        public void EnsureHasPermission(string permission)
         {
-            if(!_permissions.Contains(permission))
-                throw new Exception();              // revisit
+            if (!_permissions.Contains(permission))
+                throw new UnauthorizedAccessException(string.Format("User {0} does not have permission '{1}'", DisplayName, permission));
         }
-        
+
         public void EnsureHasRole(string role)
         {
-            if(!_roles.Contains(role))
-                throw new Exception();              // revisit
+            if (!_roles.Contains(role))
+                throw new UnauthorizedAccessException(string.Format("User {0} is not a member of role '{1}'", DisplayName, role));
         }
     }
 }

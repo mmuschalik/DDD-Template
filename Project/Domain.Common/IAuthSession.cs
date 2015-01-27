@@ -15,6 +15,10 @@ namespace Domain.Common
         bool HasRole(string role);
         bool HasPermission(string permission);
 
+        void EnsureHasPermission(string permission);
+        void EnsureHasRole(string role);
+
+
         object this[string key] { get; set; }
     }
 }
