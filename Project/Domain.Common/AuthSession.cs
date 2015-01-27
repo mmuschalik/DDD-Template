@@ -50,5 +50,17 @@ namespace Domain.Common
         {
             return _roles.Contains(role);
         }
+        
+        public void EnsureHasPermission(string permission) // add to iterface
+        {
+            if(!_permissions.Contains(permission))
+                throw new Exception();              // revisit
+        }
+        
+        public void EnsureHasRole(string role)
+        {
+            if(!_roles.Contains(role))
+                throw new Exception();              // revisit
+        }
     }
 }
