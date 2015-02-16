@@ -45,18 +45,13 @@
     <Compile Include="IHandleCommand.cs" />
     <Compile Include="IHandleDomainEvent.cs" />
     <Compile Include="IMessage.cs" />
-    <Compile Include="Infrastructure\Implementations\ActionDictionaryBus.cs" />
-    <Compile Include="Infrastructure\Implementations\ConsoleLogger.cs" />
-    <Compile Include="Infrastructure\Implementations\DelegateAdjuster.cs" />
-    <Compile Include="Infrastructure\IAuthProvider.cs" />
-    <Compile Include="Infrastructure\IBus.cs" />
+    <Compile Include="Adapters\IAuthProvider.cs" />
+    <Compile Include="Adapters\IBus.cs" />
     <Compile Include="Command.cs" />
-    <Compile Include="Infrastructure\IEventStore.cs" />
-    <Compile Include="Infrastructure\IKeyValueStore.cs" />
-    <Compile Include="Infrastructure\ILogger.cs" />
-    <Compile Include="Infrastructure\IRepository.cs" />
-    <Compile Include="Infrastructure\Implementations\MemoryKeyValueStore.cs" />
-    <Compile Include="Infrastructure\Implementations\MemoryRepository.cs" />
+    <Compile Include="Adapters\IEventStore.cs" />
+    <Compile Include="Adapters\IKeyValueStore.cs" />
+    <Compile Include="Adapters\ILogger.cs" />
+    <Compile Include="Adapters\IRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
