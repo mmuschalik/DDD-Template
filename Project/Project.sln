@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.22310.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{FB1329DD-5AFC-4DB6-B37C-E9A042234B33}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FB1329DD-5AFC-4DB6-B37C-E9A042234B33}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{7FEEFF65-C9C9-4CCB-BE00-FBD5717320BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Common", "Domain.Common\Domain.Common.csproj", "{6B587842-9E89-43F6-80DE-F2E5EBAFC5B3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Domain.Common\Common.csproj", "{6B587842-9E89-43F6-80DE-F2E5EBAFC5B3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project.Adapters", "Project.Infrastructure\Project.Adapters.csproj", "{A364A42E-B221-4EF9-B391-301A2D418F1B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExampleContext", "ExampleContext", "{3DAA87B5-BF4A-4E61-96A5-5BFECFB3506E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
