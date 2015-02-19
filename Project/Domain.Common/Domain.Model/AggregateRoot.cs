@@ -11,9 +11,10 @@ namespace Domain.Common
     /// </summary>
     public abstract class AggregateRoot : IEquatable<AggregateRoot>
     {
+        private long surrogateId;
         private ICollection<DomainEvent> uncommittedEvents;
 
-        public AggregateRoot(object id)
+        public AggregateRoot(string id)
         {
             Id = id;
             uncommittedEvents = new List<DomainEvent>();
@@ -21,16 +22,32 @@ namespace Domain.Common
 
         public AggregateRoot()
         {
-
+            Id = string.Empty;
+            uncommittedEvents = new List<DomainEvent>();
         }
 
-        public object Id { get; private set; }
+        public string Id { get; private set; }
 
         public int Version { get; internal set; }
 
         public ICollection<DomainEvent> GetUncommittedEvents()
         {
             return uncommittedEvents.ToList().AsReadOnly();
+        }
+
+        public bool IsNew()
+        {
+            return surrogateId <= 0;
+        }
+
+        public void SurrogateId(long id)
+        {
+            surrogateId = id;
+        }
+
+        public long SurrogateId()
+        {
+            return surrogateId;
         }
 
         protected void RaiseEvent(DomainEvent domainEvent)
