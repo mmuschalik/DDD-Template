@@ -66,6 +66,8 @@ namespace Project.Infrastructure.Stores
                     if (rowsupdated == 0)
                         throw new DBConcurrencyException();
                 }
+
+                item.Version(item.Version() + 1);   // increase the version for the item, in case it is used again
             }
         }
 
