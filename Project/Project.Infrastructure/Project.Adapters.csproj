@@ -74,11 +74,11 @@
     <Compile Include="Logging\ConsoleLogger.cs" />
     <Compile Include="Bus\DelegateAdjuster.cs" />
     <Compile Include="Logging\Logger.cs" />
-    <Compile Include="Stores\MemoryKeyValueStore.cs" />
-    <Compile Include="Stores\MemoryRepository.cs" />
+    <Compile Include="Persistance\MemoryKeyValueStore.cs" />
+    <Compile Include="Persistance\MemoryRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Stores\RedisKeyValueStore.cs" />
-    <Compile Include="Stores\RelationalDocumentRepository.cs" />
+    <Compile Include="Persistance\RedisKeyValueStore.cs" />
+    <Compile Include="Persistance\RelationalDocumentRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Domain.Common\Common.csproj">
