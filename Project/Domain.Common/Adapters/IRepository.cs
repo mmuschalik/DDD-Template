@@ -8,7 +8,7 @@ namespace Domain.Common.Infrastructure
 {
     public interface IRepository<T> where T : AggregateRoot
     {
-        T GetById(object key);
+        T GetById(string key);
 
         void Save(T item);
     }

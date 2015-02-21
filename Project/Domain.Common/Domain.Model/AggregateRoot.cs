@@ -12,6 +12,7 @@ namespace Domain.Common
     public abstract class AggregateRoot : IEquatable<AggregateRoot>
     {
         private long surrogateId;
+        private int _version;
         private ICollection<DomainEvent> uncommittedEvents;
 
         public AggregateRoot(string id)
@@ -27,8 +28,6 @@ namespace Domain.Common
         }
 
         public string Id { get; private set; }
-
-        public int Version { get; internal set; }
 
         public ICollection<DomainEvent> GetUncommittedEvents()
         {
@@ -48,6 +47,16 @@ namespace Domain.Common
         public long SurrogateId()
         {
             return surrogateId;
+        }
+
+        public void Version(int version)
+        {
+            _version = version;
+        }
+
+        public int Version()
+        {
+            return _version;
         }
 
         protected void RaiseEvent(DomainEvent domainEvent)

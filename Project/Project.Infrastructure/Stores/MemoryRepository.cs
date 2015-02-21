@@ -10,7 +10,7 @@ namespace Domain.Common.Infrastructure
     {
         private readonly Dictionary<string, T> _dictionary = new Dictionary<string, T>();
 
-        public T GetById(object key)
+        public T GetById(string key)
         {
             if (!_dictionary.ContainsKey(key.ToString()))
                 return null;
