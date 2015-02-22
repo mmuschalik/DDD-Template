@@ -1,6 +1,8 @@
 ﻿using Domain.Common;
 using Domain.Common.Infrastructure;
 using Newtonsoft.Json;
+using Npgsql;
+using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,12 +15,12 @@ namespace Project.Infrastructure.Stores
 {
     public class RelationalDocumentRepository<T> : IRepository<T> where T : AggregateRoot
     {
-        private DbProviderFactory _providerFactory;
+        private NpgsqlFactory _providerFactory;
         private string _connectionString;
 
-        public RelationalDocumentRepository(DbProviderFactory providerFactory, string connectionString)
+        public RelationalDocumentRepository(string connectionString)
         {
-            _providerFactory = providerFactory;
+            _providerFactory = NpgsqlFactory.Instance;
             _connectionString = connectionString;
         }
 
@@ -38,11 +40,13 @@ namespace Project.Infrastructure.Stores
                 paramBk.DbType = DbType.String;
                 paramBk.Value = key;
 
+                cmd.Parameters.Add(paramBk);
+
                 using (var reader = cmd.ExecuteReader())
                 {
                     reader.Read();
-
-                    var agg = JsonConvert.DeserializeObject<T>(reader.GetString(2));
+                    string data = reader.GetString(2);
+                    var agg = JsonConvert.DeserializeObject<T>(data);
                     agg.SurrogateId(reader.GetInt64(0));
                     agg.Version(reader.GetInt32(3));
                     return agg;
@@ -73,7 +77,8 @@ namespace Project.Infrastructure.Stores
 
         private IDbCommand GetInsertCommand(T item, IDbConnection connection)
         {
-            var cmd = connection.CreateCommand();
+            var cmd = new NpgsqlCommand();
+            cmd.Connection = connection as NpgsqlConnection;
 
             cmd.CommandText = "insert into " + item.GetType().Name + " (bk,data,version) values (@bk,@json,1)";
 
@@ -85,7 +90,8 @@ namespace Project.Infrastructure.Stores
 
             var paramValue = cmd.CreateParameter();
             paramValue.ParameterName = "@json";
-            paramValue.DbType = DbType.String;
+            paramValue.NpgsqlDbType = NpgsqlDbType.Json;
+            paramValue.NpgsqlValue = JsonConvert.SerializeObject(item);
             paramValue.Value = JsonConvert.SerializeObject(item);
             cmd.Parameters.Add(paramValue);
 
@@ -94,7 +100,8 @@ namespace Project.Infrastructure.Stores
 
         private IDbCommand GetUpdateCommand(T item, IDbConnection connection)
         {
-            var cmd = connection.CreateCommand();
+            var cmd = new NpgsqlCommand();
+            cmd.Connection = connection as NpgsqlConnection;
 
             cmd.CommandText = "update " + item.GetType().Name + " set data = @json,version=version+1 where id=@id and version=@version";
 
@@ -106,8 +113,8 @@ namespace Project.Infrastructure.Stores
 
             var paramValue = cmd.CreateParameter();
             paramValue.ParameterName = "@json";
-            paramValue.DbType = DbType.String;
-            paramValue.Value = JsonConvert.SerializeObject(item);
+            paramValue.NpgsqlDbType = NpgsqlDbType.Json;
+            paramValue.NpgsqlValue = JsonConvert.SerializeObject(item);
             cmd.Parameters.Add(paramValue);
 
             var paramVersion = cmd.CreateParameter();

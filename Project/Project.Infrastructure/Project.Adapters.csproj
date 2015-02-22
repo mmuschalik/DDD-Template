@@ -76,6 +76,7 @@
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Persistance\MemoryKeyValueStore.cs" />
     <Compile Include="Persistance\MemoryRepository.cs" />
+    <Compile Include="Persistance\PostgresqlDocumentRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Persistance\RedisKeyValueStore.cs" />
     <Compile Include="Persistance\RelationalDocumentRepository.cs" />
