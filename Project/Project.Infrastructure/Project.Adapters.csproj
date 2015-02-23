@@ -63,6 +63,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -76,10 +77,11 @@
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Persistance\MemoryKeyValueStore.cs" />
     <Compile Include="Persistance\MemoryRepository.cs" />
-    <Compile Include="Persistance\PostgresqlDocumentRepository.cs" />
+    <Compile Include="Persistance\PostgresqlDocumentStore.cs" />
+    <Compile Include="Persistance\PostgresqlEventStore .cs" />
+    <Compile Include="Persistance\PostgresqlRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Persistance\RedisKeyValueStore.cs" />
-    <Compile Include="Persistance\RelationalDocumentRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Domain.Common\Common.csproj">

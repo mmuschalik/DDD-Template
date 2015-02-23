@@ -40,6 +40,7 @@
     <Compile Include="Domain.Model\AuthToken.cs" />
     <Compile Include="Domain.Model\Credentials.cs" />
     <Compile Include="Domain.Model\DomainEvent.cs" />
+    <Compile Include="Domain.Model\DomainEventAggregate.cs" />
     <Compile Include="Domain.Model\Ensure.cs" />
     <Compile Include="Domain.Model\IAuthSession.cs" />
     <Compile Include="Domain.Model\IHandleCommand.cs" />
