@@ -11,8 +11,6 @@ namespace Domain.Common
     /// </summary>
     public abstract class AggregateRoot : IEquatable<AggregateRoot>
     {
-        private long surrogateId;
-        private int _version;
         private ICollection<DomainEvent> uncommittedEvents;
 
         public AggregateRoot(string id)
@@ -29,6 +27,10 @@ namespace Domain.Common
 
         public string Id { get; private set; }
 
+        public long SurrogateId { get; internal set; }
+
+        public int Version { get; internal set; }
+
         public ICollection<DomainEvent> GetUncommittedEvents()
         {
             return uncommittedEvents.ToList().AsReadOnly();
@@ -36,27 +38,7 @@ namespace Domain.Common
 
         public bool IsNew()
         {
-            return surrogateId <= 0;
-        }
-
-        public void SurrogateId(long id)
-        {
-            surrogateId = id;
-        }
-
-        public long SurrogateId()
-        {
-            return surrogateId;
-        }
-
-        public void Version(int version)
-        {
-            _version = version;
-        }
-
-        public int Version()
-        {
-            return _version;
+            return SurrogateId <= 0;
         }
 
         protected void RaiseEvent(DomainEvent domainEvent)
@@ -83,7 +65,8 @@ namespace Domain.Common
         {
             dynamic t = this;
             t.Apply(@event);
-            if (isNew) uncommittedEvents.Add(@event);
+            if (isNew)
+                uncommittedEvents.Add(@event);
         }
 
         public bool Equals(AggregateRoot other)

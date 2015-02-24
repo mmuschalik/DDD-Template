@@ -35,6 +35,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\RepositoryBase.cs" />
     <Compile Include="Domain.Model\AggregateRoot.cs" />
     <Compile Include="Domain.Model\AuthSession.cs" />
     <Compile Include="Domain.Model\AuthToken.cs" />

@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Common.Adapters;
 using Domain.Common.Domain.Model;
 using Domain.Common.Infrastructure;
 using System;
@@ -11,7 +12,7 @@ using System.Transactions;
 
 namespace Project.Adapters.Persistance
 {
-    public class PostgresqlRepository<T> : IRepository<T>, IDisposable where T : AggregateRoot
+    public class PostgresqlRepository<T> : RepositoryBase, IRepository<T>, IDisposable where T : AggregateRoot
     {
         private PostgresqlDocumentStore<T> _repository;
         private PostgresqlEventStore _eventStore;
@@ -33,7 +34,7 @@ namespace Project.Adapters.Persistance
             {
 
                 if (item.IsNew())
-                    _repository.Add(item);
+                    this.SetSurrogateId(item, _repository.Add(item));
                 else
                 {
                     int rowsupdated = _repository.Update(item);
@@ -47,7 +48,7 @@ namespace Project.Adapters.Persistance
             }
 
             item.MarkChangesAsCommitted();
-            item.Version(item.Version() + 1);   // increase the version for the item, in case it is used again
+            this.SetVersion(item, item.Version + 1);   // increase the version for the item, in case it is used again
         }
 
         public void Dispose()

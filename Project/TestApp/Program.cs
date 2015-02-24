@@ -16,9 +16,8 @@ namespace TestApp
             var repo = new PostgresqlRepository<TestAgg>("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin;Enlist=true");
             repo.Save(agg);
 
-            var agg1 = repo.GetById("item1");
-            agg1.ChangeName("name3");
-            repo.Save(agg1);
+            agg.ChangeName("name3");
+            repo.Save(agg);
 
         }
     }

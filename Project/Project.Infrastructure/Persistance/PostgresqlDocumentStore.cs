@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Common.Adapters;
 using Newtonsoft.Json;
 using Npgsql;
 using NpgsqlTypes;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Project.Adapters.Persistance
 {
-    public class PostgresqlDocumentStore<T> : IDisposable where T : AggregateRoot
+    public class PostgresqlDocumentStore<T> : RepositoryBase, IDisposable where T : AggregateRoot
     {
         private NpgsqlConnection _connection;
 
@@ -44,17 +45,17 @@ namespace Project.Adapters.Persistance
             {
                 string data = reader.GetString(2);
                 var agg = JsonConvert.DeserializeObject<T>(data);
-                agg.SurrogateId(reader.GetInt64(0));
-                agg.Version(reader.GetInt32(3));
+                this.SetSurrogateId(agg, reader.GetInt64(0));
+                this.SetVersion(agg, reader.GetInt32(3));
                 yield return agg;
             }
         }
 
-        public int Add(T item)
+        public long Add(T item)
         {
             PrepareConnection();
 
-            return GetInsertCommand(item).ExecuteNonQuery();
+            return (long)GetInsertCommand(item).ExecuteScalar();
         }
 
         public int Update(T item)
@@ -72,7 +73,7 @@ namespace Project.Adapters.Persistance
             var paramId = cmd.CreateParameter();
             paramId.ParameterName = "@id";
             paramId.DbType = DbType.Int64;
-            paramId.Value = item.SurrogateId();
+            paramId.Value = item.SurrogateId;
             cmd.Parameters.Add(paramId);
 
             var paramValue = cmd.CreateParameter();
@@ -84,7 +85,7 @@ namespace Project.Adapters.Persistance
             var paramVersion = cmd.CreateParameter();
             paramVersion.ParameterName = "@version";
             paramVersion.DbType = DbType.Int32;
-            paramVersion.Value = item.Version();
+            paramVersion.Value = item.Version;
             cmd.Parameters.Add(paramVersion);
 
             return cmd;
@@ -109,7 +110,7 @@ namespace Project.Adapters.Persistance
         {
             var cmd = _connection.CreateCommand();
 
-            cmd.CommandText = "insert into " + item.GetType().Name + " (bk,data,version) values (@bk,@json,1)";
+            cmd.CommandText = "insert into " + item.GetType().Name + " (bk,data,version) values (@bk,@json,1) returning id";
 
             var paramBk = cmd.CreateParameter();
             paramBk.ParameterName = "@bk";
