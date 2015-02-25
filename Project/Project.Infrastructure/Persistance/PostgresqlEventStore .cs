@@ -52,7 +52,7 @@ namespace Project.Adapters.Persistance
 
         private DomainEvent DeseralizeDomainEvent(DomainEventAggregate aggregate)
         {
-            return (Domain.Common.DomainEvent)JsonConvert.DeserializeObject(aggregate.DomainEventBody, Type.GetType(aggregate.TypeName));
+            return (DomainEvent)JsonConvert.DeserializeObject(aggregate.DomainEventBody, Type.GetType(aggregate.TypeName));
         }
 
         public IEnumerable<DomainEvent> GetAllDomainEvents()

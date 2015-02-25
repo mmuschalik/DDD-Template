@@ -47,7 +47,7 @@ namespace Project.Adapters.Persistance
                 scope.Complete();
             }
 
-            item.EventsCommitted();
+            _repository.EventsCommitted(item);
             this.SetVersion(item, item.Version + 1);   // increase the version for the item, in case it is used again
         }
 

@@ -71,10 +71,11 @@ namespace Project.Adapters.Persistance
 
         public void Add(IEnumerable<T> items)
         {
-            PrepareConnection();
-
             foreach (var i in items)
+            {
+                PrepareConnection();
                 this.SetSurrogateId(i, (long)GetInsertCommand(i).ExecuteScalar());
+            }
         }
 
         public void Add(T item)

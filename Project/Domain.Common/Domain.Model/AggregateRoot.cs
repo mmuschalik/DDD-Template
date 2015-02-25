@@ -17,12 +17,16 @@ namespace Domain.Common
         {
             Id = id;
             uncommittedEvents = new List<DomainEvent>();
+            SurrogateId = 0;
+            Version = 0;
         }
 
         public AggregateRoot()
         {
             Id = string.Empty;
             uncommittedEvents = new List<DomainEvent>();
+            SurrogateId = 0;
+            Version = 0;
         }
 
         public string Id { get; private set; }
@@ -46,7 +50,7 @@ namespace Domain.Common
             uncommittedEvents.Add(domainEvent);
         }
 
-        public void EventsCommitted()
+        internal void EventsCommitted()
         {
             uncommittedEvents.Clear();
         }

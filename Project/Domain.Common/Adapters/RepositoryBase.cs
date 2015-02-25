@@ -17,5 +17,10 @@ namespace Domain.Common.Adapters
         {
             root.Version = version;
         }
+
+        public void EventsCommitted(AggregateRoot root)
+        {
+            root.EventsCommitted();
+        }
     }
 }
