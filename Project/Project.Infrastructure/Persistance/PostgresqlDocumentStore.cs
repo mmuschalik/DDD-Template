@@ -69,11 +69,17 @@ namespace Project.Adapters.Persistance
             }
         }
 
-        public long Add(T item)
+        public void Add(IEnumerable<T> items)
         {
             PrepareConnection();
 
-            return (long)GetInsertCommand(item).ExecuteScalar();
+            foreach (var i in items)
+                this.SetSurrogateId(i, (long)GetInsertCommand(i).ExecuteScalar());
+        }
+
+        public void Add(T item)
+        {
+            Add(new List<T> { item });
         }
 
         public int Update(T item)

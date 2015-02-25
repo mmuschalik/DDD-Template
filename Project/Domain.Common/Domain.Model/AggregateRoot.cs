@@ -46,7 +46,7 @@ namespace Domain.Common
             uncommittedEvents.Add(domainEvent);
         }
 
-        public void MarkChangesAsCommitted()
+        public void EventsCommitted()
         {
             uncommittedEvents.Clear();
         }

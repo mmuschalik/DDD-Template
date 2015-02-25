@@ -23,7 +23,7 @@ namespace TestApp
             repo.Save(agg);
 
             var es = new PostgresqlEventStore("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin;Enlist=true");
-            var ev = es.GetAllDomainEventsSince(0);
+            var ev = es.GetAllDomainEvents();
         }
     }
 

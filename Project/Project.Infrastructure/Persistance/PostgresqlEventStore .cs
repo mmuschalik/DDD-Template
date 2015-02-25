@@ -20,35 +20,39 @@ namespace Project.Adapters.Persistance
             _repository = new PostgresqlDocumentStore<DomainEventAggregate>(connectionString);
         }
 
-        public IEnumerable<Domain.Common.DomainEvent> GetAllDomainEventsForStream(string id)
+        public IEnumerable<DomainEvent> GetAllDomainEventsForStream(string id)
         {
             return DeseralizeDomainEvents(_repository.GetById(id));
         }
 
-        public IEnumerable<Domain.Common.DomainEvent> GetAllDomainEventsSince(long startId)
+        public IEnumerable<DomainEvent> GetAllDomainEventsSince(long startId)
         {
             return DeseralizeDomainEvents(_repository.GetAllSinceSurrogateId(startId));
         }
 
-        public IEnumerable<Domain.Common.DomainEvent> GetAllDomainEventsBetween(long startId, long endId)
+        public IEnumerable<DomainEvent> GetAllDomainEventsBetween(long startId, long endId)
         {
             return DeseralizeDomainEvents(_repository.GetAllBetweenSurrogateId(startId, endId));
         }
 
         public void AppendToStream(string id, IEnumerable<Domain.Common.DomainEvent> events)
         {
-            foreach (var e in events)   // may need to add a param with list
-                _repository.Add(new DomainEventAggregate(id, JsonConvert.SerializeObject(e), e.GetType().AssemblyQualifiedName, DateTime.Now));
+            _repository.Add(events.Select(e => new DomainEventAggregate(id, JsonConvert.SerializeObject(e), e.GetType().AssemblyQualifiedName, DateTime.Now)));
         }
 
-        public void Append(IEnumerable<Domain.Common.DomainEvent> events)
+        public void Append(IEnumerable<DomainEvent> events)
         {
-            AppendToStream("", events);
+            AppendToStream(string.Empty, events);
         }
 
-        private List<Domain.Common.DomainEvent> DeseralizeDomainEvents(IEnumerable<DomainEventAggregate> aggs)
+        private List<DomainEvent> DeseralizeDomainEvents(IEnumerable<DomainEventAggregate> aggregates)
         {
-            return aggs.Select(a => (Domain.Common.DomainEvent)JsonConvert.DeserializeObject(a.DomainEventBody, Type.GetType(a.TypeName))).ToList();
+            return aggregates.Select(a => DeseralizeDomainEvent(a)).ToList();
+        }
+
+        private DomainEvent DeseralizeDomainEvent(DomainEventAggregate aggregate)
+        {
+            return (Domain.Common.DomainEvent)JsonConvert.DeserializeObject(aggregate.DomainEventBody, Type.GetType(aggregate.TypeName));
         }
 
         public IEnumerable<DomainEvent> GetAllDomainEvents()

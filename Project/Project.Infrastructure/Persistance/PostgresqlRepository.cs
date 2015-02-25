@@ -34,7 +34,7 @@ namespace Project.Adapters.Persistance
             {
 
                 if (item.IsNew())
-                    this.SetSurrogateId(item, _repository.Add(item));
+                    _repository.Add(item);
                 else
                 {
                     int rowsupdated = _repository.Update(item);
@@ -47,7 +47,7 @@ namespace Project.Adapters.Persistance
                 scope.Complete();
             }
 
-            item.MarkChangesAsCommitted();
+            item.EventsCommitted();
             this.SetVersion(item, item.Version + 1);   // increase the version for the item, in case it is used again
         }
 
