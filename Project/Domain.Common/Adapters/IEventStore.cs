@@ -8,6 +8,16 @@ namespace Domain.Common.Infrastructure
 {
     public interface IEventStore
     {
-        IEnumerable<DomainEvent> GetDomainEvents(string id);
+        void Append(IEnumerable<DomainEvent> events);
+
+        IEnumerable<DomainEvent> GetAllDomainEvents();
+
+        IEnumerable<DomainEvent> GetAllDomainEventsSince(long startId);
+
+        IEnumerable<DomainEvent> GetAllDomainEventsBetween(long startId, long endId);
+
+        IEnumerable<DomainEvent> GetAllDomainEventsForStream(string streamId);
+
+        void AppendToStream(string id, IEnumerable<DomainEvent> events);
     }
 }

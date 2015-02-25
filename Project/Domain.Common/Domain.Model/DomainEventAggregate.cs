@@ -8,11 +8,17 @@ namespace Domain.Common.Domain.Model
 {
     public class DomainEventAggregate : AggregateRoot
     {
-        public DomainEvent DomainEvent { get; private set; }
+        public string DomainEventBody { get; private set; }
 
-        public DomainEventAggregate(string id, DomainEvent @event) : base(id)
+        public string TypeName { get; private set; }
+
+        public DateTime Occurred { get; private set; }
+
+        public DomainEventAggregate(string id, string domainEventBody, string typeName, DateTime occurred) : base(id)
         {
-            DomainEvent = @event;
+            DomainEventBody = domainEventBody;
+            TypeName = typeName;
+            Occurred = occurred;
         }
     }
 }

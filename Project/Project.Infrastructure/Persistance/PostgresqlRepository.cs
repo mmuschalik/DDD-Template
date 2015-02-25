@@ -43,7 +43,7 @@ namespace Project.Adapters.Persistance
                         throw new DBConcurrencyException();
                 }
 
-                _eventStore.Append(item.GetType().Name + "-" + item.Id, item.GetUncommittedEvents());
+                _eventStore.AppendToStream(item.GetType().Name + "-" + item.Id, item.GetUncommittedEvents());
                 scope.Complete();
             }
 

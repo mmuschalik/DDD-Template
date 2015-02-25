@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Project.Adapters.Persistance
 {
-    public class PostgresqlDocumentStore<T> : RepositoryBase, IDisposable where T : AggregateRoot
+    internal class PostgresqlDocumentStore<T> : RepositoryBase, IDisposable where T : AggregateRoot
     {
         private NpgsqlConnection _connection;
 
@@ -29,10 +29,28 @@ namespace Project.Adapters.Persistance
 
         public IEnumerable<T> GetById(string key)
         {
+            var cmd = GetByIdCommand(key);
+
+            return GetAggregatesFromCommand(cmd);
+        }
+
+        public IEnumerable<T> GetAllSinceSurrogateId(long startid)
+        {
+            var cmd = GetAllSinceSurrogateIdCommand(startid);
+
+            return GetAggregatesFromCommand(cmd);
+        }
+
+        public IEnumerable<T> GetAllBetweenSurrogateId(long startid, long endid)
+        {
+            var cmd = GetAllBetweenSurrogateIdCommand(startid, endid);
+
+            return GetAggregatesFromCommand(cmd);
+        }
+
+        private IEnumerable<T> GetAggregatesFromCommand(IDbCommand cmd)
+        {
             PrepareConnection();
-
-            var cmd = GetSelectCommand(key);
-
             using (var reader = cmd.ExecuteReader())
             {
                 return GetAggregatesFromReader(reader).ToList();
@@ -68,7 +86,7 @@ namespace Project.Adapters.Persistance
         private IDbCommand GetUpdateCommand(T item)
         {
             var cmd = _connection.CreateCommand();
-            cmd.CommandText = "update " + item.GetType().Name + " set data = @json,version=version+1 where id=@id and version=@version";
+            cmd.CommandText = "update " + item.GetType().Name + " set data = @json,version=version+1 where id=@id and version=@version-1";
 
             var paramId = cmd.CreateParameter();
             paramId.ParameterName = "@id";
@@ -91,7 +109,7 @@ namespace Project.Adapters.Persistance
             return cmd;
         }
 
-        private IDbCommand GetSelectCommand(string key)
+        private IDbCommand GetByIdCommand(string key)
         {
             var cmd = _connection.CreateCommand();
             cmd.CommandText = "select id, bk, data, version from " + typeof(T).Name + " where bk = @bk";
@@ -106,11 +124,47 @@ namespace Project.Adapters.Persistance
             return cmd;
         }
 
+        private IDbCommand GetAllSinceSurrogateIdCommand(long startid)
+        {
+            var cmd = _connection.CreateCommand();
+            cmd.CommandText = "select id, bk, data, version from " + typeof(T).Name + " where id >= @start";
+
+            var paramStart = cmd.CreateParameter();
+            paramStart.ParameterName = "@start";
+            paramStart.DbType = DbType.Int64;
+            paramStart.Value = startid;
+
+            cmd.Parameters.Add(paramStart);
+
+            return cmd;
+        }
+
+        private IDbCommand GetAllBetweenSurrogateIdCommand(long startid, long endid)
+        {
+            var cmd = _connection.CreateCommand();
+            cmd.CommandText = "select id, bk, data, version from " + typeof(T).Name + " where id >= @start and id<=@end";
+
+            var paramStart = cmd.CreateParameter();
+            paramStart.ParameterName = "@start";
+            paramStart.DbType = DbType.Int64;
+            paramStart.Value = startid;
+
+            var paramEnd = cmd.CreateParameter();
+            paramEnd.ParameterName = "@end";
+            paramEnd.DbType = DbType.Int64;
+            paramEnd.Value = endid;
+
+            cmd.Parameters.Add(paramStart);
+            cmd.Parameters.Add(paramEnd);
+
+            return cmd;
+        }
+
         private IDbCommand GetInsertCommand(T item)
         {
             var cmd = _connection.CreateCommand();
 
-            cmd.CommandText = "insert into " + item.GetType().Name + " (bk,data,version) values (@bk,@json,1) returning id";
+            cmd.CommandText = "insert into " + item.GetType().Name + " (bk,data,version) values (@bk,@json,0) returning id";
 
             var paramBk = cmd.CreateParameter();
             paramBk.ParameterName = "@bk";
