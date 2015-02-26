@@ -2,6 +2,7 @@
 using Domain.Common.Adapters;
 using Domain.Common.Domain.Model;
 using Domain.Common.Infrastructure;
+using Newtonsoft.Json;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -51,15 +52,15 @@ namespace Project.Adapters.Persistance
                             throw new DBConcurrencyException();
                     }
 
-                    var eventStore = new PostgresqlEventStore(conn);
-                    eventStore.AppendToStream(item.GetType().Name + "-" + item.Id, item.GetUncommittedEvents());
+                    var eventStore = new PostgresqlDocumentStore<StoredDomainEvent>(conn);
+                    eventStore.Add(item.GetUncommittedEvents().Select(e => new StoredDomainEvent(item.GetType().Name + "-" + item.Id, JsonConvert.SerializeObject(e), e.GetType().AssemblyQualifiedName, DateTime.Now)));
 
                     tran.Commit();
                 }
             }
 
             this.EventsCommitted(item);
-            this.SetVersion(item, item.Version + 1);   // increase the version for the item, in case it is used again
+            this.SetVersion(item, item.Version + 1);
         }
     }
 

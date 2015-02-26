@@ -181,7 +181,7 @@ namespace Project.Adapters.Persistance
         private IDbCommand GetAllBetweenSurrogateIdCommand(long startid, long endid, NpgsqlConnection con)
         {
             var cmd = con.CreateCommand();
-            cmd.CommandText = "select id, bk, data, version from " + typeof(T).Name + " where id >= @start and id<=@end";
+            cmd.CommandText = "select id, bk, data, version from " + typeof(T).Name + " where id > @start and id<=@end";
 
             var paramStart = cmd.CreateParameter();
             paramStart.ParameterName = "@start";

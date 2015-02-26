@@ -16,26 +16,24 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            var agg = new TestAgg("item1", "name1");
-            var repo = new PostgresqlRepository<TestAgg>("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin;Enlist=true");
-            repo.Save(agg);
+            //var agg = new TestAgg("item1", "name1");
+            //var repo = new PostgresqlRepository<TestAgg>("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin");
+            //repo.Save(agg);
+            //repo.Save(agg);
+            //repo.Save(agg);
 
-            Thread.Sleep(1000);
+            //agg.ChangeName("name3");
+            //agg.ChangeName("name4");
+            //agg.ChangeName("name5");
+            //repo.Save(agg);
 
-            agg.ChangeName("name3");
-            agg.ChangeName("name4");
-            agg.ChangeName("name5");
-            repo.Save(agg);
+            var es = new PostgresqlEventStore("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin");
 
-            Thread.Sleep(1000);
+            var repo1 = new PostgresqlRepository<DomainEventsPublishedTracker>("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin");
+            var bus = new ActionDictionaryBus();
 
-            //var es = new PostgresqlEventStore("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin");
-
-            //var repo1 = new PostgresqlRepository<DomainEventsPublishedTracker>("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin");
-            //var bus = new ActionDictionaryBus();
-
-            //var s = new DomainEventPublisherService(repo1, es, bus);
-            //s.Publish("channel1");
+            var s = new DomainEventPublisherService(repo1, es, bus);
+            s.Publish("channel1");
         }
     }
 

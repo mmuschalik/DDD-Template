@@ -13,31 +13,51 @@ namespace Project.Adapters.Persistance
 {
     public class PostgresqlEventStore : IEventStore
     {
-        private PostgresqlDocumentStore<StoredDomainEvent> _repository;
-
-        public PostgresqlEventStore(NpgsqlConnection connection)
+        private string _connectionString;
+        public PostgresqlEventStore(string connectionString)
         {
-            _repository = new PostgresqlDocumentStore<StoredDomainEvent>(connection);
+            _connectionString = connectionString;
+        }
+
+        public NpgsqlConnection PrepareConnection()
+        {
+            return new NpgsqlConnection(_connectionString);
         }
 
         public IEnumerable<DomainEvent> GetAllDomainEventsForStream(string id)
         {
-            return DeseralizeDomainEvents(_repository.GetById(id));
+            using(var con = PrepareConnection())
+            {
+                var repo = new PostgresqlDocumentStore<StoredDomainEvent>(con);
+                return DeseralizeDomainEvents(repo.GetById(id));
+            }
         }
 
         public IEnumerable<DomainEvent> GetAllDomainEventsSince(long startId)
         {
-            return DeseralizeDomainEvents(_repository.GetAllSinceSurrogateId(startId));
+            using (var con = PrepareConnection())
+            {
+                var repo = new PostgresqlDocumentStore<StoredDomainEvent>(con);
+                return DeseralizeDomainEvents(repo.GetAllSinceSurrogateId(startId));
+            }
         }
 
         public IEnumerable<DomainEvent> GetAllDomainEventsBetween(long startId, long endId)
         {
-            return DeseralizeDomainEvents(_repository.GetAllBetweenSurrogateId(startId, endId));
+            using (var con = PrepareConnection())
+            {
+                var repo = new PostgresqlDocumentStore<StoredDomainEvent>(con);
+                return DeseralizeDomainEvents(repo.GetAllBetweenSurrogateId(startId, endId));
+            }
         }
 
         public void AppendToStream(string id, IEnumerable<Domain.Common.DomainEvent> events)
         {
-            _repository.Add(events.Select(e => new StoredDomainEvent(id, JsonConvert.SerializeObject(e), e.GetType().AssemblyQualifiedName, DateTime.Now)));
+            using (var con = PrepareConnection())
+            {
+                var repo = new PostgresqlDocumentStore<StoredDomainEvent>(con);
+                repo.Add(events.Select(e => new StoredDomainEvent(id, JsonConvert.SerializeObject(e), e.GetType().AssemblyQualifiedName, DateTime.Now)));
+            }
         }
 
         public void Append(IEnumerable<DomainEvent> events)
@@ -62,7 +82,11 @@ namespace Project.Adapters.Persistance
 
         public long GetLastDomainEventId()
         {
-            return _repository.GetLastSurrogateId();
+            using (var con = PrepareConnection())
+            {
+                var repo = new PostgresqlDocumentStore<StoredDomainEvent>(con);
+                return repo.GetLastSurrogateId();
+            }
         }
     }
 

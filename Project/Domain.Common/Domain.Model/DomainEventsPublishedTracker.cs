@@ -10,11 +10,6 @@ namespace Domain.Common.Domain.Model
     {
         public long LastPublishedDomainEventId { get; private set; }
 
-        public DomainEventsPublishedTracker(string id)
-            : this(id, 0)
-        {
-        }
-
         public DomainEventsPublishedTracker(string id, long lastPublishedDomainEventId)
             : base(id)
         {
