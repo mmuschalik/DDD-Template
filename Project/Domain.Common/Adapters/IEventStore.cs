@@ -10,6 +10,8 @@ namespace Domain.Common.Infrastructure
     {
         void Append(IEnumerable<DomainEvent> events);
 
+        long GetLastDomainEventId();
+
         IEnumerable<DomainEvent> GetAllDomainEvents();
 
         IEnumerable<DomainEvent> GetAllDomainEventsSince(long startId);

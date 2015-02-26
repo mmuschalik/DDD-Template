@@ -12,69 +12,92 @@ using System.Threading.Tasks;
 
 namespace Project.Adapters.Persistance
 {
-    internal class PostgresqlDocumentStore<T> : RepositoryBase, IDisposable where T : AggregateRoot
+    internal class PostgresqlDocumentStore<T> : RepositoryBase where T : AggregateRoot
     {
         private NpgsqlConnection _connection;
 
-        public PostgresqlDocumentStore(string connectionString)
+        public PostgresqlDocumentStore(NpgsqlConnection connection)
         {
-            _connection = new NpgsqlConnection(connectionString);
+            _connection = connection;
         }
 
-        public void PrepareConnection()
+        public NpgsqlConnection PrepareConnection()
         {
             if (_connection.State != ConnectionState.Open)
                 _connection.Open();
+
+            return _connection;
+        }
+
+        public long GetLastSurrogateId()
+        {
+            var con = PrepareConnection();
+            {
+                var cmd = GetLastIdCommand(con);
+
+                var result = cmd.ExecuteScalar();
+
+                return result != DBNull.Value ? (long)result : 0;
+            }
         }
 
         public IEnumerable<T> GetById(string key)
         {
-            var cmd = GetByIdCommand(key);
+            var con = PrepareConnection();
+            {
+                var cmd = GetByIdCommand(key, con);
 
-            return GetAggregatesFromCommand(cmd);
+                return GetAggregatesFromCommand(cmd);
+            }
         }
 
         public IEnumerable<T> GetAllSinceSurrogateId(long startid)
         {
-            var cmd = GetAllSinceSurrogateIdCommand(startid);
+            var con = PrepareConnection();
+            {
+                var cmd = GetAllSinceSurrogateIdCommand(startid, con);
 
-            return GetAggregatesFromCommand(cmd);
+                return GetAggregatesFromCommand(cmd);
+            }
         }
 
         public IEnumerable<T> GetAllBetweenSurrogateId(long startid, long endid)
         {
-            var cmd = GetAllBetweenSurrogateIdCommand(startid, endid);
+            var con = PrepareConnection();
+            {
+                var cmd = GetAllBetweenSurrogateIdCommand(startid, endid, con);
 
-            return GetAggregatesFromCommand(cmd);
+                return GetAggregatesFromCommand(cmd);
+            }
         }
 
         private IEnumerable<T> GetAggregatesFromCommand(IDbCommand cmd)
         {
-            PrepareConnection();
+            List<T> results = new List<T>();
+
             using (var reader = cmd.ExecuteReader())
             {
-                return GetAggregatesFromReader(reader).ToList();
+                while (reader.Read())
+                {
+                    string data = reader.GetString(2);
+                    var agg = JsonConvert.DeserializeObject<T>(data);
+                    this.SetSurrogateId(agg, reader.GetInt64(0));
+                    this.SetVersion(agg, reader.GetInt32(3));
+                    results.Add(agg);
+                }
             }
-        }
 
-        private IEnumerable<T> GetAggregatesFromReader(IDataReader reader)
-        {
-            while (reader.Read())
-            {
-                string data = reader.GetString(2);
-                var agg = JsonConvert.DeserializeObject<T>(data);
-                this.SetSurrogateId(agg, reader.GetInt64(0));
-                this.SetVersion(agg, reader.GetInt32(3));
-                yield return agg;
-            }
+            return results;
         }
 
         public void Add(IEnumerable<T> items)
         {
-            foreach (var i in items)
+            var con = PrepareConnection();
             {
-                PrepareConnection();
-                this.SetSurrogateId(i, (long)GetInsertCommand(i).ExecuteScalar());
+                foreach (var i in items)
+                {
+                    this.SetSurrogateId(i, (long)GetInsertCommand(i, con).ExecuteScalar());
+                }
             }
         }
 
@@ -85,14 +108,15 @@ namespace Project.Adapters.Persistance
 
         public int Update(T item)
         {
-            PrepareConnection();
-
-            return GetUpdateCommand(item).ExecuteNonQuery();
+            var con = PrepareConnection();
+            {
+                return GetUpdateCommand(item, con).ExecuteNonQuery();
+            }
         }
 
-        private IDbCommand GetUpdateCommand(T item)
+        private IDbCommand GetUpdateCommand(T item, NpgsqlConnection con)
         {
-            var cmd = _connection.CreateCommand();
+            var cmd = con.CreateCommand();
             cmd.CommandText = "update " + item.GetType().Name + " set data = @json,version=version+1 where id=@id and version=@version-1";
 
             var paramId = cmd.CreateParameter();
@@ -116,9 +140,17 @@ namespace Project.Adapters.Persistance
             return cmd;
         }
 
-        private IDbCommand GetByIdCommand(string key)
+        private IDbCommand GetLastIdCommand(NpgsqlConnection con)
         {
-            var cmd = _connection.CreateCommand();
+            var cmd = con.CreateCommand();
+            cmd.CommandText = "select max(id) from " + typeof(T).Name;
+
+            return cmd;
+        }
+
+        private IDbCommand GetByIdCommand(string key, NpgsqlConnection con)
+        {
+            var cmd = con.CreateCommand();
             cmd.CommandText = "select id, bk, data, version from " + typeof(T).Name + " where bk = @bk";
 
             var paramBk = cmd.CreateParameter();
@@ -131,9 +163,9 @@ namespace Project.Adapters.Persistance
             return cmd;
         }
 
-        private IDbCommand GetAllSinceSurrogateIdCommand(long startid)
+        private IDbCommand GetAllSinceSurrogateIdCommand(long startid, NpgsqlConnection con)
         {
-            var cmd = _connection.CreateCommand();
+            var cmd = con.CreateCommand();
             cmd.CommandText = "select id, bk, data, version from " + typeof(T).Name + " where id >= @start";
 
             var paramStart = cmd.CreateParameter();
@@ -146,9 +178,9 @@ namespace Project.Adapters.Persistance
             return cmd;
         }
 
-        private IDbCommand GetAllBetweenSurrogateIdCommand(long startid, long endid)
+        private IDbCommand GetAllBetweenSurrogateIdCommand(long startid, long endid, NpgsqlConnection con)
         {
-            var cmd = _connection.CreateCommand();
+            var cmd = con.CreateCommand();
             cmd.CommandText = "select id, bk, data, version from " + typeof(T).Name + " where id >= @start and id<=@end";
 
             var paramStart = cmd.CreateParameter();
@@ -167,9 +199,9 @@ namespace Project.Adapters.Persistance
             return cmd;
         }
 
-        private IDbCommand GetInsertCommand(T item)
+        private IDbCommand GetInsertCommand(T item, NpgsqlConnection con)
         {
-            var cmd = _connection.CreateCommand();
+            var cmd = con.CreateCommand();
 
             cmd.CommandText = "insert into " + item.GetType().Name + " (bk,data,version) values (@bk,@json,0) returning id";
 
@@ -187,11 +219,6 @@ namespace Project.Adapters.Persistance
             cmd.Parameters.Add(paramValue);
 
             return cmd;
-        }
-
-        public void Dispose()
-        {
-            _connection.Dispose();
         }
     }
 

@@ -2,6 +2,7 @@
 using Domain.Common.Adapters;
 using Domain.Common.Domain.Model;
 using Domain.Common.Infrastructure;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,48 +13,53 @@ using System.Transactions;
 
 namespace Project.Adapters.Persistance
 {
-    public class PostgresqlRepository<T> : RepositoryBase, IRepository<T>, IDisposable where T : AggregateRoot
+    public class PostgresqlRepository<T> : RepositoryBase, IRepository<T> where T : AggregateRoot
     {
-        private PostgresqlDocumentStore<T> _repository;
-        private PostgresqlEventStore _eventStore;
+        private string _connectionString;
 
         public PostgresqlRepository(string connectionString)
         {
-            _repository = new PostgresqlDocumentStore<T>(connectionString);
-            _eventStore = new PostgresqlEventStore(connectionString);
+            _connectionString = connectionString;
         }
 
         public T GetById(string key)
         {
-            return _repository.GetById(key).FirstOrDefault();
+            using (var conn = new NpgsqlConnection(_connectionString))
+            {
+                var repo = new PostgresqlDocumentStore<T>(conn);
+                return repo.GetById(key).FirstOrDefault();
+            }
+                
         }
 
         public void Save(T item)
         {
-            using (var scope = new TransactionScope())
+            using (var conn = new NpgsqlConnection(_connectionString))
             {
-
-                if (item.IsNew())
-                    _repository.Add(item);
-                else
+                conn.Open();
+                using (var tran = conn.BeginTransaction())
                 {
-                    int rowsupdated = _repository.Update(item);
+                    var repo = new PostgresqlDocumentStore<T>(conn);
 
-                    if (rowsupdated == 0)
-                        throw new DBConcurrencyException();
+                    if (item.IsNew())
+                        repo.Add(item);
+                    else
+                    {
+                        int rowsupdated = repo.Update(item);
+
+                        if (rowsupdated == 0)
+                            throw new DBConcurrencyException();
+                    }
+
+                    var eventStore = new PostgresqlEventStore(conn);
+                    eventStore.AppendToStream(item.GetType().Name + "-" + item.Id, item.GetUncommittedEvents());
+
+                    tran.Commit();
                 }
-
-                _eventStore.AppendToStream(item.GetType().Name + "-" + item.Id, item.GetUncommittedEvents());
-                scope.Complete();
             }
 
-            _repository.EventsCommitted(item);
+            this.EventsCommitted(item);
             this.SetVersion(item, item.Version + 1);   // increase the version for the item, in case it is used again
-        }
-
-        public void Dispose()
-        {
-            _repository.Dispose();
         }
     }
 

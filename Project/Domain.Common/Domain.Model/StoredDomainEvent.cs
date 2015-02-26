@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Common.Domain.Model
 {
-    public class DomainEventAggregate : AggregateRoot
+    public class StoredDomainEvent : AggregateRoot
     {
         public string DomainEventBody { get; private set; }
 
@@ -14,7 +14,7 @@ namespace Domain.Common.Domain.Model
 
         public DateTime Occurred { get; private set; }
 
-        public DomainEventAggregate(string id, string domainEventBody, string typeName, DateTime occurred) : base(id)
+        public StoredDomainEvent(string id, string domainEventBody, string typeName, DateTime occurred) : base(id)
         {
             DomainEventBody = domainEventBody;
             TypeName = typeName;

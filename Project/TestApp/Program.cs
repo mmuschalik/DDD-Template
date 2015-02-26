@@ -1,9 +1,13 @@
 ﻿using Domain.Common;
+using Domain.Common.Application;
+using Domain.Common.Domain.Model;
+using Domain.Common.Infrastructure;
 using Project.Adapters.Persistance;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TestApp
@@ -16,14 +20,22 @@ namespace TestApp
             var repo = new PostgresqlRepository<TestAgg>("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin;Enlist=true");
             repo.Save(agg);
 
-            
+            Thread.Sleep(1000);
+
             agg.ChangeName("name3");
             agg.ChangeName("name4");
             agg.ChangeName("name5");
             repo.Save(agg);
 
-            var es = new PostgresqlEventStore("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin;Enlist=true");
-            var ev = es.GetAllDomainEvents();
+            Thread.Sleep(1000);
+
+            //var es = new PostgresqlEventStore("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin");
+
+            //var repo1 = new PostgresqlRepository<DomainEventsPublishedTracker>("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin");
+            //var bus = new ActionDictionaryBus();
+
+            //var s = new DomainEventPublisherService(repo1, es, bus);
+            //s.Publish("channel1");
         }
     }
 

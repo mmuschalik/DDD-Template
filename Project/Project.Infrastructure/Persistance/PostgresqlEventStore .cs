@@ -13,11 +13,11 @@ namespace Project.Adapters.Persistance
 {
     public class PostgresqlEventStore : IEventStore
     {
-        private PostgresqlDocumentStore<DomainEventAggregate> _repository;
+        private PostgresqlDocumentStore<StoredDomainEvent> _repository;
 
-        public PostgresqlEventStore(string connectionString)
+        public PostgresqlEventStore(NpgsqlConnection connection)
         {
-            _repository = new PostgresqlDocumentStore<DomainEventAggregate>(connectionString);
+            _repository = new PostgresqlDocumentStore<StoredDomainEvent>(connection);
         }
 
         public IEnumerable<DomainEvent> GetAllDomainEventsForStream(string id)
@@ -37,7 +37,7 @@ namespace Project.Adapters.Persistance
 
         public void AppendToStream(string id, IEnumerable<Domain.Common.DomainEvent> events)
         {
-            _repository.Add(events.Select(e => new DomainEventAggregate(id, JsonConvert.SerializeObject(e), e.GetType().AssemblyQualifiedName, DateTime.Now)));
+            _repository.Add(events.Select(e => new StoredDomainEvent(id, JsonConvert.SerializeObject(e), e.GetType().AssemblyQualifiedName, DateTime.Now)));
         }
 
         public void Append(IEnumerable<DomainEvent> events)
@@ -45,12 +45,12 @@ namespace Project.Adapters.Persistance
             AppendToStream(string.Empty, events);
         }
 
-        private List<DomainEvent> DeseralizeDomainEvents(IEnumerable<DomainEventAggregate> aggregates)
+        private List<DomainEvent> DeseralizeDomainEvents(IEnumerable<StoredDomainEvent> aggregates)
         {
             return aggregates.Select(a => DeseralizeDomainEvent(a)).ToList();
         }
 
-        private DomainEvent DeseralizeDomainEvent(DomainEventAggregate aggregate)
+        private DomainEvent DeseralizeDomainEvent(StoredDomainEvent aggregate)
         {
             return (DomainEvent)JsonConvert.DeserializeObject(aggregate.DomainEventBody, Type.GetType(aggregate.TypeName));
         }
@@ -58,6 +58,11 @@ namespace Project.Adapters.Persistance
         public IEnumerable<DomainEvent> GetAllDomainEvents()
         {
             return GetAllDomainEventsSince(0);
+        }
+
+        public long GetLastDomainEventId()
+        {
+            return _repository.GetLastSurrogateId();
         }
     }
 
