@@ -117,9 +117,7 @@ namespace Project.Adapters.Persistance
         private IDbCommand GetUpdateCommand(T item, NpgsqlConnection con)
         {
             var cmd = con.CreateCommand();
-            cmd.CommandText = "update " + item.GetType().Name + " set data = @json,version=version+1 where id=@id and version=@version-1";
-
-            var paramId = cmd.CreateParameter();
+            cmd.CommandText = "update " + item.GetType().Name + " set data = @json,version=version+1 where id=@id and version=@version";            var paramId = cmd.CreateParameter();
             paramId.ParameterName = "@id";
             paramId.DbType = DbType.Int64;
             paramId.Value = item.SurrogateId;
