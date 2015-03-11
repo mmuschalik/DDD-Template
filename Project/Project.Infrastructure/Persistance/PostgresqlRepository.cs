@@ -35,6 +35,8 @@ namespace Project.Adapters.Persistance
 
         public void Save(T item)
         {
+            bool isNew = item.IsNew();
+
             using (var conn = new NpgsqlConnection(_connectionString))
             {
                 conn.Open();
@@ -42,7 +44,7 @@ namespace Project.Adapters.Persistance
                 {
                     var repo = new PostgresqlDocumentStore<T>(conn);
 
-                    if (item.IsNew())
+                    if (isNew)
                         repo.Add(item);
                     else
                     {
@@ -60,7 +62,9 @@ namespace Project.Adapters.Persistance
             }
 
             this.EventsCommitted(item);
-            this.SetVersion(item, item.Version + 1);
+
+            if(!isNew)
+                this.SetVersion(item, item.Version + 1);
         }
     }
 
