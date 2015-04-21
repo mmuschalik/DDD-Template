@@ -39,11 +39,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Application\AccountApplicationService.cs" />
+    <Compile Include="Domain.Model\Account.cs" />
+    <Compile Include="Domain.Model\AccountActivated.cs" />
+    <Compile Include="Domain.Model\AccountCreated.cs" />
+    <Compile Include="Domain.Model\AccountView.cs" />
+    <Compile Include="Domain.Model\Address.cs" />
+    <Compile Include="Domain.Model\BankAccount.cs" />
+    <Compile Include="Domain.Model\BankAccountAdded.cs" />
+    <Compile Include="Domain.Model\Beneficiary.cs" />
+    <Compile Include="Domain.Model\BeneficiaryAdded.cs" />
+    <Compile Include="Domain.Model\Contact.cs" />
+    <Compile Include="Domain.Model\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Application\" />
-    <Folder Include="Domain.Model\" />
+    <None Include="Domain.Model\AccountAggregate.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Domain.Common\Domain.Common.csproj">
+      <Project>{6b587842-9e89-43f6-80de-f2e5ebafc5b3}</Project>
+      <Name>Domain.Common %28Domain.Common\Domain.Common%29</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

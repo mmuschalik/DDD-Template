@@ -13,6 +13,7 @@ namespace Domain.Common.Application
         private readonly IRepository<DomainEventsPublishedTracker> _repository;
         private readonly IEventStore _eventStore;
         private readonly IBus _bus;
+        private string _channel = "channel";
 
         public DomainEventPublisherService(IRepository<DomainEventsPublishedTracker> repository, IEventStore eventStore, IBus bus)
         {
@@ -21,38 +22,50 @@ namespace Domain.Common.Application
             _bus = bus;
         }
 
-        public void CreateChannel(string channel)
+        public void Initialise(string channel)
         {
-            var domainEventsPublishedTracker = new DomainEventsPublishedTracker(channel, 0);
+            _channel = channel;
+        }
+
+        public void CreateChannel()
+        {
+            var domainEventsPublishedTracker = new DomainEventsPublishedTracker(_channel, 0);
             _repository.Save(domainEventsPublishedTracker);
         }
 
-        private DomainEventsPublishedTracker GetTracker(string channel)
+        private DomainEventsPublishedTracker GetTracker()
         {
-            var domainEventsPublishedTracker = _repository.GetById(channel);
+            var domainEventsPublishedTracker = _repository.GetById(_channel);
 
             if (domainEventsPublishedTracker == null)
-                domainEventsPublishedTracker = new DomainEventsPublishedTracker(channel, 0);
+                domainEventsPublishedTracker = new DomainEventsPublishedTracker(_channel, 0);
 
             return domainEventsPublishedTracker;
         }
 
-        public void Publish(string channel)
+        public long Publish()
         {
-            var domainEventsPublishedTracker = this.GetTracker(channel);
+            var domainEventsPublishedTracker = this.GetTracker();
 
             long lastStoredDomainEventId = _eventStore.GetLastDomainEventId();
             long lastPublishedDomainEventId = domainEventsPublishedTracker.LastPublishedDomainEventId;
+            long messagesSent = 0;
 
-            var remainingUnpublishedEvents = _eventStore.GetAllDomainEventsBetween(lastPublishedDomainEventId, lastStoredDomainEventId);
-
-            foreach (var @event in remainingUnpublishedEvents)
+            if (lastStoredDomainEventId > lastPublishedDomainEventId)
             {
-                _bus.Publish<DomainEvent>(@event);
+                var remainingUnpublishedEvents = _eventStore.GetAllDomainEventsBetween(lastPublishedDomainEventId, lastStoredDomainEventId);
+
+                foreach (var @event in remainingUnpublishedEvents)
+                {
+                    _bus.Publish<DomainEvent>(@event);
+                    messagesSent++;
+                }
             }
 
             domainEventsPublishedTracker.UpdateLastPublishedDomainEvent(lastStoredDomainEventId);
             _repository.Save(domainEventsPublishedTracker);
+
+            return messagesSent;
         }
     }
 }

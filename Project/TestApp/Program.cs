@@ -2,7 +2,9 @@
 using Domain.Common.Application;
 using Domain.Common.Domain.Model;
 using Domain.Common.Infrastructure;
-using Project.Adapters.Persistance;
+using Example.Application;
+using Example.Domain.Model;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,52 +18,55 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            //var agg = new TestAgg("item1", "name1");
-            //var repo = new PostgresqlRepository<TestAgg>("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin");
-            //repo.Save(agg);
-            //repo.Save(agg);
-            //repo.Save(agg);
+            var credentials = new Credentials("admin", "adminpassword");
+            Register.Authenticate(credentials);
 
-            //agg.ChangeName("name3");
-            //agg.ChangeName("name4");
-            //agg.ChangeName("name5");
-            //repo.Save(agg);
-
-            var es = new PostgresqlEventStore("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin");
-
-            var repo1 = new PostgresqlRepository<DomainEventsPublishedTracker>("Server=127.0.0.1;Port=5432;Database=test;User Id=postgres;Password=admin");
-            var bus = new ActionDictionaryBus();
-
-            var s = new DomainEventPublisherService(repo1, es, bus);
-            s.Publish("channel1");
+            CreateNewAccount();
+            AddBankDetails();
+            ActivateAccount();
+            AddBeneficiary();
+            
+            var accountDetails = GetAccountDetails();
         }
-    }
 
-    public class TestAgg : AggregateRoot
-    {
-        public TestAgg(string id, string name) : base(id)
+        static void CreateNewAccount()
         {
-            Name = name;
+            Register.
+                AccountApplicationService.
+                CreateNewAccount(1000, "maurice muschalik", "maurice", "muschalik", "maurice.muschalik@gmail.com", "987654321");
         }
 
-        public string Name { get; set; }
-
-        public void ChangeName(string newname)
+        static void AddBankDetails()
         {
-            Name = newname;
-            RaiseEvent(new TestAggNameChanged(Id, newname));
+            Register.
+                AccountApplicationService.
+                AddBankDetailsToAccount(1000, "CBA", 123123, 1000, "maurice's CBA account");
         }
-    }
 
-    public class TestAggNameChanged : DomainEvent
-    {
-        public string Id { get; private set; }
-        public string NameChanged { get; private set; }
-
-        public TestAggNameChanged(string id, string namechanged)
+        static void ActivateAccount()
         {
-            Id = id;
-            NameChanged = namechanged;
+            Register.
+                AccountApplicationService.
+                ActivateAccount(1000);
         }
+
+        static AccountView GetAccountDetails()
+        {
+            return Register.
+                AccountApplicationService.
+                GetAccountDetailsForAccountNumber(1000);
+        }
+
+        static void AddBeneficiary()
+        {
+            Register.
+                AccountApplicationService.
+                AddBeneficiary(1000, "reika", "muschalik", (decimal)1.0);
+
+            Register.
+                AccountApplicationService.
+                AddBeneficiary(1000, "sophie", "muschalik", (decimal)0.5);
+        }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Common.Domain.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +22,7 @@ namespace Domain.Common
             Version = 0;
         }
 
-        public AggregateRoot()
+        protected AggregateRoot()
         {
             Id = string.Empty;
             uncommittedEvents = new List<DomainEvent>();
@@ -29,7 +30,7 @@ namespace Domain.Common
             Version = 0;
         }
 
-        public string Id { get; private set; }
+        public string Id { get; protected internal set; }
 
         public long SurrogateId { get; internal set; }
 
@@ -37,16 +38,36 @@ namespace Domain.Common
 
         public ICollection<DomainEvent> GetUncommittedEvents()
         {
+            SaveCreatedEventIfNew();
             return uncommittedEvents.ToList().AsReadOnly();
+        }
+
+        protected virtual DomainEvent CreateAggregateDomainEvent()
+        {
+            return null;
         }
 
         public bool IsNew()
         {
-            return SurrogateId <= 0;
+            return SurrogateId <= 0 && Version <= 0;
+        }
+
+        private void SaveCreatedEventIfNew()
+        {
+            if (uncommittedEvents.Count == 0 && IsNew())
+            {
+                var createdEvent = CreateAggregateDomainEvent();
+
+                if (createdEvent != null)
+                {
+                    uncommittedEvents.Add(createdEvent);
+                }
+            }
         }
 
         protected void RaiseEvent(DomainEvent domainEvent)
         {
+            SaveCreatedEventIfNew();
             uncommittedEvents.Add(domainEvent);
         }
 
@@ -68,9 +89,12 @@ namespace Domain.Common
         private void ApplyChange(DomainEvent @event, bool isNew)
         {
             dynamic t = this;
-            t.Apply(@event);
+            dynamic e = @event;
+            t.Apply(e);
             if (isNew)
                 uncommittedEvents.Add(@event);
+
+            Version++;
         }
 
         public bool Equals(AggregateRoot other)

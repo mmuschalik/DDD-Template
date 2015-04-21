@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Example.Domain.Model.Account">
+    <Position X="3.25" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAQCAAAAAAAAAABAAAAgAAQAgAABBAAAQBAAAAgAI=</HashCode>
+      <FileName>Domain.Model\Account.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ContactPerson" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Beneficiaries" />
+      <Property Name="BankAccounts" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Example.Domain.Model.BankAccount">
+    <Position X="0.5" Y="1.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAABQAAAAAIAA=</HashCode>
+      <FileName>Domain.Model\BankAccount.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Example.Domain.Model.Beneficiary">
+    <Position X="7" Y="3" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AIAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Domain.Model\Beneficiary.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Person" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Example.Domain.Model.Contact">
+    <Position X="3.75" Y="4.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAICAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Domain.Model\Contact.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Person" />
+      <Field Name="Address" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Example.Domain.Model.Address" Collapsed="true">
+    <Position X="1.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Domain.Model\Address.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Example.Domain.Model.Person">
+    <Position X="7" Y="5.25" Width="1.5" />
+    <Members>
+      <Method Name="Person" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAEAAAAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Domain.Model\Person.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

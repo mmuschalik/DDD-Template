@@ -83,6 +83,7 @@ namespace Project.Adapters.Persistance
                     var agg = JsonConvert.DeserializeObject<T>(data);
                     this.SetSurrogateId(agg, reader.GetInt64(0));
                     this.SetVersion(agg, reader.GetInt32(3));
+                    this.SetId(agg, reader.GetString(1));
                     results.Add(agg);
                 }
             }

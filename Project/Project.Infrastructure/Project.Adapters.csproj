@@ -84,9 +84,9 @@
     <Compile Include="Persistance\RedisKeyValueStore.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Domain.Common\Common.csproj">
+    <ProjectReference Include="..\Domain.Common\Domain.Common.csproj">
       <Project>{6b587842-9e89-43f6-80de-f2e5ebafc5b3}</Project>
-      <Name>Common</Name>
+      <Name>Domain.Common %28Domain.Common\Domain.Common%29</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

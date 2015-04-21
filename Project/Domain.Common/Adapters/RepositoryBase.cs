@@ -18,6 +18,11 @@ namespace Domain.Common.Adapters
             root.Version = version;
         }
 
+        protected void SetId(AggregateRoot root, string id)
+        {
+            root.Id = id;
+        }
+
         public void EventsCommitted(AggregateRoot root)
         {
             root.EventsCommitted();

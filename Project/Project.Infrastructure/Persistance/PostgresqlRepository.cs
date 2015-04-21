@@ -28,7 +28,8 @@ namespace Project.Adapters.Persistance
             using (var conn = new NpgsqlConnection(_connectionString))
             {
                 var repo = new PostgresqlDocumentStore<T>(conn);
-                return repo.GetById(key).FirstOrDefault();
+                var agg = repo.GetById(key).FirstOrDefault();
+                return agg;
             }
                 
         }
@@ -44,6 +45,12 @@ namespace Project.Adapters.Persistance
                 {
                     var repo = new PostgresqlDocumentStore<T>(conn);
 
+                    var eventStore = new PostgresqlDocumentStore<StoredDomainEvent>(conn);
+                    eventStore.Add(item.GetUncommittedEvents().Select(e => 
+                        new StoredDomainEvent(item.GetType().Name + "-" + item.Id, 
+                            JsonConvert.SerializeObject(e), 
+                            e.GetType().AssemblyQualifiedName, DateTime.Now)));
+
                     if (isNew)
                         repo.Add(item);
                     else
@@ -53,10 +60,7 @@ namespace Project.Adapters.Persistance
                         if (rowsupdated == 0)
                             throw new DBConcurrencyException();
                     }
-
-                    var eventStore = new PostgresqlDocumentStore<StoredDomainEvent>(conn);
-                    eventStore.Add(item.GetUncommittedEvents().Select(e => new StoredDomainEvent(item.GetType().Name + "-" + item.Id, JsonConvert.SerializeObject(e), e.GetType().AssemblyQualifiedName, DateTime.Now)));
-
+                    
                     tran.Commit();
                 }
             }
